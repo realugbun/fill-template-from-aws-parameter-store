@@ -72,7 +72,8 @@ func main() {
 
 	// Add the name of the parameters we want to the request
 	for k := range parameters {
-		getParametersInput.Names = append(getParametersInput.Names, &k)
+		key := k
+		getParametersInput.Names = append(getParametersInput.Names, &key)
 	}
 
 	// Create a session with the region we want from the region flag
@@ -107,16 +108,7 @@ func main() {
 
 	// Put the values we got from the API into our map
 	for _, p := range param.Parameters {
-		for k := range parameters {
-			if k == *p.Name {
-				parameters[k] = *p.Value
-			}
-		}
-	}
-
-	// Replace the template references with the actual values
-	for k, v := range parameters {
-		template = []byte(strings.ReplaceAll(string(template), "{{ "+k+" }}", v))
+		template = []byte(strings.ReplaceAll(string(template), "{{ "+*p.Name+" }}", *p.Value))
 	}
 
 	// Write out the new file
